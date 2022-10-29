@@ -1,15 +1,17 @@
 import * as trpc from '@trpc/server';
-
 import { z } from 'zod';
 
-export const appRouter = trpc.router().query('hello', {
+import { PokemonClient } from 'pokenode-ts';
+
+export const appRouter = trpc.router().query('get-pokemon-by-id', {
   input: z.object({
-    text: z.string(),
+    id: z.number(),
   }),
-  resolve({ input }) {
-    return {
-      greeting: `hello ${input?.text ?? 'world'}`,
-    };
+  async resolve({ input }) {
+    const api = new PokemonClient();
+
+    const pokemon = await api.getPokemonById(input.id);
+    return pokemon;
   },
 });
 
